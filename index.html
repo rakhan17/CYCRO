@@ -67,6 +67,46 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
+
+        /* FIX: Floating label for textarea */
+        .floating-label-container {
+            position: relative;
+        }
+        #user-input {
+            min-height: 48px; /* Match button height */
+            max-height: 200px;
+            resize: none;
+            overflow-y: auto;
+        }
+        #user-input-label {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            transition: all 0.2s ease-in-out;
+            pointer-events: none;
+            background-color: #1f2937; /* Match textarea bg */
+            padding: 0 4px;
+        }
+        #user-input:focus + #user-input-label,
+        #user-input:not(:placeholder-shown) + #user-input-label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #facc15;
+        }
+        
+        /* FIX: Typing animation caret */
+        @keyframes blink { 50% { opacity: 0; } }
+        .typing-caret {
+            display: inline-block;
+            width: 8px;
+            height: 1rem;
+            background-color: #facc15;
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+            vertical-align: bottom;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-[#111827] via-[#1e1b4b] to-[#312e81] text-gray-100 overflow-hidden">
@@ -155,15 +195,19 @@
             <div class="flex flex-col bg-black/20 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
                 <div class="p-4 border-b border-white/10"><h2 class="text-lg font-semibold text-center">Chat Assistant</h2></div>
                 <div id="chat-container" class="flex-grow p-4 space-y-4 overflow-y-auto">
-                     <div class="flex items-start gap-3 animate-slide-in-left">
-                        <div class="h-8 w-8 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 font-bold text-sm flex-shrink-0">AI</div>
-                        <div class="bg-indigo-600/50 rounded-lg p-3 max-w-lg"><p class="text-sm">Selamat datang di CYCRO! Silakan ajukan permintaan coding Anda.</p></div>
+                     <!-- FIX: Removed avatar -->
+                     <div class="flex animate-slide-in-left">
+                        <div class="bg-indigo-600/50 rounded-lg p-3 max-w-[85%]"><p class="text-sm">Selamat datang di CYCRO! Silakan ajukan permintaan coding Anda.</p></div>
                     </div>
                 </div>
                 <div class="p-4 border-t border-white/10">
-                    <form id="chat-form" class="flex items-center gap-3">
-                        <input id="user-input" type="text" placeholder="Ketik permintaan..." class="w-full bg-gray-800 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                        <button type="submit" class="bg-yellow-400 text-gray-900 font-bold py-2 px-5 rounded-lg hover:bg-yellow-300 transition transform hover:scale-105 flex items-center gap-2"><span>Kirim</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg></button>
+                    <!-- FIX: Swapped input for textarea with floating label -->
+                    <form id="chat-form" class="flex items-start gap-3">
+                        <div class="relative w-full floating-label-container">
+                            <textarea id="user-input" rows="1" placeholder=" " class="w-full bg-[#1f2937] border border-gray-600 rounded-lg p-3 pt-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 peer"></textarea>
+                            <label for="user-input" id="user-input-label">Ketik permintaan...</label>
+                        </div>
+                        <button type="submit" class="bg-yellow-400 text-gray-900 font-bold py-3 px-5 rounded-lg hover:bg-yellow-300 transition transform hover:scale-105 flex items-center gap-2 h-12 flex-shrink-0"><span>Kirim</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg></button>
                     </form>
                 </div>
             </div>
@@ -421,14 +465,23 @@
         clearTerminalBtn.addEventListener('click', () => terminalOutput.textContent = '');
         codeViewBtn.addEventListener('click', () => switchView('code'));
         previewViewBtn.addEventListener('click', () => switchView('preview'));
-        codeEditor.addEventListener('input', updatePreviewButtonState);
+        
+        // FIX: Add event listener for auto-resizing textarea
+        userInput.addEventListener('input', autoResizeTextarea);
         
         // --- Inisialisasi ---
         updatePreviewButtonState();
         setupFavicon();
+        autoResizeTextarea(); // Initial call
 
         // --- Functions ---
         
+        // FIX: Auto-resize textarea function
+        function autoResizeTextarea() {
+            userInput.style.height = 'auto';
+            userInput.style.height = (userInput.scrollHeight) + 'px';
+        }
+
         async function handleChatSubmit(e) {
             e.preventDefault();
             
@@ -443,6 +496,7 @@
             appendMessage(message, 'user');
             chatHistory.push({ role: 'user', parts: [{ text: message }] });
             userInput.value = '';
+            autoResizeTextarea(); // Reset height
             appendMessage('', 'ai', true);
             
             requestCount++;
@@ -480,7 +534,6 @@
             }
         }
         
-        // FIX: Made preview check more robust. It now checks if <html> tag exists anywhere in the code.
         function updatePreviewButtonState() {
             const code = codeEditor.value;
             previewViewBtn.disabled = !code.toLowerCase().includes('<html');
@@ -501,35 +554,77 @@
             previewViewBtn.classList.toggle('bg-indigo-600', isPreview);
             previewViewBtn.classList.toggle('text-white', isPreview);
         }
-
+        
+        // FIX: appendMessage updated to remove avatars and fix overflow
         function appendMessage(text, sender, isLoading = false) {
             const messageWrapper = document.createElement('div');
-            messageWrapper.className = `flex items-start gap-3 ${sender === 'user' ? 'justify-end animate-slide-in-right' : 'animate-slide-in-left'}`;
-            let messageContent;
-            if (sender === 'ai') {
-                const bubbleContent = isLoading ? `<div class="typing-indicator flex"><span></span><span></span><span></span></div>` : `<div class="text-sm message-text">${text.replace(/\n/g, '<br>')}</div>`;
-                messageContent = `<div class="h-8 w-8 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 font-bold text-sm flex-shrink-0">AI</div><div class="bg-indigo-600/50 rounded-lg p-3 max-w-lg ${isLoading ? 'loading-bubble' : ''}">${bubbleContent}</div>`;
+            // Aligns messages left/right
+            messageWrapper.className = `flex w-full ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+
+            const messageBubble = document.createElement('div');
+            messageBubble.className = `rounded-lg p-3 max-w-[85%] animate-fade-in ${sender === 'user' ? 'bg-gray-700' : 'bg-indigo-600/50'}`;
+            
+            if (isLoading) {
+                messageBubble.classList.add('loading-bubble');
+                messageBubble.innerHTML = `<div class="typing-indicator flex"><span></span><span></span><span></span></div>`;
             } else {
-                messageContent = `<div class="bg-gray-700 rounded-lg p-3 max-w-lg"><p class="text-sm">${text}</p></div><div class="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">U</div>`;
+                 const messageText = document.createElement(sender === 'user' ? 'p' : 'div');
+                 messageText.className = 'text-sm message-text whitespace-pre-wrap break-words';
+                 messageText.textContent = text;
+                 messageBubble.appendChild(messageText);
             }
-            messageWrapper.innerHTML = messageContent;
+            
+            messageWrapper.appendChild(messageBubble);
             chatContainer.appendChild(messageWrapper);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
+
+        // FIX: New function for typing effect
+        function typeWriterEffect(element, text, onComplete) {
+            let i = 0;
+            element.innerHTML = ''; // Clear previous content
+            const caret = document.createElement('span');
+            caret.className = 'typing-caret';
+            element.appendChild(caret);
+            
+            function type() {
+                if (i < text.length) {
+                    // Use textContent to avoid HTML injection issues
+                    const currentText = element.textContent.slice(0, -1);
+                    element.textContent = currentText + text.charAt(i);
+                    element.appendChild(caret);
+                    i++;
+                    setTimeout(type, 15); // Adjust speed here
+                } else {
+                    caret.remove(); // Remove caret when done
+                    if(onComplete) onComplete();
+                }
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            type();
+        }
         
+        // FIX: updateLastAIMessage now uses the typewriter effect
         function updateLastAIMessage(fullText) {
             const loadingBubble = chatContainer.querySelector('.loading-bubble');
             if(loadingBubble) {
-                const { explanation, code } = parseAIResponse(fullText);
-                loadingBubble.innerHTML = `<div class="text-sm message-text">${explanation.replace(/\n/g, '<br>')}</div>`;
+                loadingBubble.innerHTML = ''; // Clear the "..."
                 loadingBubble.classList.remove('loading-bubble');
-                if (code) {
-                    codeEditor.value = code;
-                    updatePreviewButtonState();
-                    if (!previewViewBtn.disabled) {
-                       switchView('preview'); // Automatically switch to preview if code is HTML
+                const { explanation, code } = parseAIResponse(fullText);
+                
+                const messageTextElement = document.createElement('div');
+                messageTextElement.className = 'text-sm message-text whitespace-pre-wrap break-words';
+                loadingBubble.appendChild(messageTextElement);
+                
+                typeWriterEffect(messageTextElement, explanation, () => {
+                     if (code) {
+                        codeEditor.value = code;
+                        updatePreviewButtonState();
+                        if (!previewViewBtn.disabled) {
+                           switchView('preview');
+                        }
                     }
-                }
+                });
             }
              chatContainer.scrollTop = chatContainer.scrollHeight;
         }
@@ -551,9 +646,7 @@
                 setTimeout(() => { copyText.innerHTML = originalIcon; copyButton.classList.remove('text-green-400'); }, 2000);
             });
         }
-
-        // FIX: The terminal now intelligently executes code.
-        // It runs JS inside <script> tags for HTML, or runs plain JS otherwise.
+        
         function runCode() {
             terminalPanel.classList.remove('translate-y-full');
             terminalOutput.textContent = '';
@@ -585,7 +678,6 @@
                         logToTerminal('Tag <script> ditemukan, tetapi kosong.');
                     }
                 } else if (!fullCode.toLowerCase().includes('<html')) {
-                    // If it's not HTML, assume it's plain JS and execute it
                     new Function(fullCode)();
                     logToTerminal('Eksekusi JavaScript selesai.');
                 } else {
@@ -594,7 +686,6 @@
             } catch (e) {
                 console.error(e.name + ': ' + e.message);
             } finally {
-                // Restore original console functions
                 console.log = originalConsole.log;
                 console.error = originalConsole.error;
                 console.clear = originalConsole.clear;
