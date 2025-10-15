@@ -67,66 +67,57 @@
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-
-        /* --- AUTH SCREEN STYLES --- */
-        #login-panel {
-            background-image: url('hero1.png');
-            background-size: cover;
-            background-position: center;
-        }
-        #register-panel {
-            background-image: url('hero.png');
-            background-size: cover;
-            background-position: center;
-        }
-        .glass-form {
-            background: rgba(17, 24, 39, 0.6); /* bg-gray-900 with opacity */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.5rem; /* rounded-3xl */
-            padding: 2.5rem; /* p-10 */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-[#111827] via-[#1e1b4b] to-[#312e81] text-gray-100 overflow-hidden">
     <!-- Auth Screen -->
     <div id="auth-screen" class="absolute inset-0 z-[100] bg-[#111827] transition-opacity duration-300 overflow-hidden">
         <!-- Login Panel -->
-        <div id="login-panel" class="absolute inset-0 flex items-center justify-center p-4 transition-transform duration-700 ease-in-out transform">
-             <div class="w-full max-w-sm relative glass-form overflow-hidden">
-                <!-- Loading Overlay -->
-                <div id="login-loader" class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center hidden z-10">
-                    <div class="loader"></div>
+        <div id="login-panel" class="absolute inset-0 flex transition-transform duration-700 ease-in-out transform">
+            <div class="w-1/2 h-full relative overflow-hidden hidden lg:flex items-center justify-center bg-[#111827]">
+                <!-- Hero image for login panel -->
+                <img src="hero1.png" alt="CYCRO Hero Login" class="absolute h-full w-[150%] max-w-none object-cover left-0" onerror="this.style.display='none'">
+            </div>
+            <div class="w-full lg:w-1/2 h-full flex items-center justify-center p-8 bg-[#111827]">
+                <div class="max-w-sm w-full relative">
+                    <!-- Loading Overlay -->
+                    <div id="login-loader" class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center rounded-lg hidden z-10">
+                        <div class="loader"></div>
+                    </div>
+                    <h2 class="text-4xl font-bold text-white">Selamat Datang</h2>
+                    <p class="text-gray-400 mt-2">Masuk untuk melanjutkan ke CYCRO.</p>
+                    <form id="login-form" class="mt-8 space-y-6">
+                        <input type="email" id="login-email" placeholder="Email" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        <input type="password" id="login-password" placeholder="Password" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        <p id="login-error" class="text-red-400 text-sm text-center h-4"></p>
+                        <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-500 transition-all transform hover:scale-105">Masuk</button>
+                    </form>
+                    <p class="mt-6 text-center text-sm text-gray-400">Belum punya akun? <a href="#" id="show-register" class="font-medium text-yellow-400 hover:underline">Daftar</a></p>
                 </div>
-                <h2 class="text-4xl font-bold text-white text-center">Selamat Datang</h2>
-                <p class="text-gray-400 mt-2 text-center">Masuk untuk melanjutkan ke CYCRO.</p>
-                <form id="login-form" class="mt-8 space-y-6">
-                    <input type="email" id="login-email" placeholder="Email" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                    <input type="password" id="login-password" placeholder="Password" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                    <p id="login-error" class="text-red-400 text-sm text-center h-4"></p>
-                    <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-lg hover:bg-indigo-500 transition-all transform hover:scale-105">Masuk</button>
-                </form>
-                <p class="mt-6 text-center text-sm text-gray-400">Belum punya akun? <a href="#" id="show-register" class="font-medium text-yellow-400 hover:underline">Daftar</a></p>
             </div>
         </div>
         <!-- Register Panel -->
-        <div id="register-panel" class="absolute inset-0 flex items-center justify-center p-4 transition-transform duration-700 ease-in-out transform translate-x-full">
-            <div class="w-full max-w-sm relative glass-form overflow-hidden">
-                <!-- Loading Overlay -->
-                <div id="register-loader" class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center hidden z-10">
-                    <div class="loader"></div>
-                </div>
-                <h2 class="text-4xl font-bold text-white text-center">Buat Akun Baru</h2>
-                <p class="text-gray-400 mt-2 text-center">Mulai perjalanan coding AI Anda.</p>
-                <form id="register-form" class="mt-8 space-y-6">
-                    <input type="email" id="register-email" placeholder="Email" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                    <input type="password" id="register-password" placeholder="Password (min. 6 karakter)" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
-                    <p id="register-error" class="text-red-400 text-sm text-center h-4"></p>
-                    <button type="submit" class="w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-300 transition-all transform hover:scale-105">Daftar</button>
-                </form>
-                <p class="mt-6 text-center text-sm text-gray-400">Sudah punya akun? <a href="#" id="show-login" class="font-medium text-indigo-400 hover:underline">Masuk</a></p>
+        <div id="register-panel" class="absolute inset-0 flex transition-transform duration-700 ease-in-out transform translate-x-full">
+            <div class="w-full lg:w-1/2 h-full flex items-center justify-center p-8 bg-[#111827]">
+               <div class="max-w-sm w-full relative">
+                    <!-- Loading Overlay -->
+                    <div id="register-loader" class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm flex items-center justify-center rounded-lg hidden z-10">
+                        <div class="loader"></div>
+                    </div>
+                   <h2 class="text-4xl font-bold text-white">Buat Akun Baru</h2>
+                   <p class="text-gray-400 mt-2">Mulai perjalanan coding AI Anda.</p>
+                   <form id="register-form" class="mt-8 space-y-6">
+                       <input type="email" id="register-email" placeholder="Email" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                       <input type="password" id="register-password" placeholder="Password (min. 6 karakter)" required class="w-full bg-gray-800/50 border border-gray-700 rounded-lg py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                       <p id="register-error" class="text-red-400 text-sm text-center h-4"></p>
+                       <button type="submit" class="w-full bg-yellow-400 text-gray-900 font-bold py-3 rounded-lg hover:bg-yellow-300 transition-all transform hover:scale-105">Daftar</button>
+                   </form>
+                   <p class="mt-6 text-center text-sm text-gray-400">Sudah punya akun? <a href="#" id="show-login" class="font-medium text-indigo-400 hover:underline">Masuk</a></p>
+               </div>
+            </div>
+            <div class="w-1/2 h-full relative overflow-hidden hidden lg:flex items-center justify-center bg-[#111827]">
+                <!-- Hero image for register panel -->
+                <img src="hero.png" alt="CYCRO Hero" class="absolute h-full w-[150%] max-w-none object-cover left-0" onerror="this.style.display='none'">
             </div>
         </div>
     </div>
@@ -205,7 +196,7 @@
                         <h3 class="text-2xl font-bold text-yellow-400">Free</h3><p class="mt-2 text-gray-400">Untuk memulai dan mencoba.</p>
                         <div class="my-6"><span class="text-5xl font-bold">Rp 0</span></div>
                         <ul class="space-y-3 text-sm text-gray-300 flex-grow">
-                            <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span><b>5 permintaan</b>/hari</span></li>
+                            <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span><b>100 permintaan</b>/hari</span></li>
                             <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Akses model dasar</span></li>
                         </ul>
                         <button class="mt-8 w-full bg-gray-700 text-white py-3 rounded-lg font-semibold hover:bg-gray-600 transition">Anda di paket ini</button>
@@ -239,7 +230,7 @@
                     <!-- CYMAX Plan -->
                     <div class="plan-card bg-gray-900/50 backdrop-blur-lg border border-gray-700 rounded-2xl p-6 flex flex-col transition-all">
                         <h3 class="text-2xl font-bold text-white">CYMAX</h3><p class="mt-2 text-gray-400">Solusi ultimate untuk perusahaan.</p>
-                        <div class="my-6"><span class="text-5xl font-bold">Rp 250k</span><span class="text-gray-400">/bln</span></div>
+                        <div class="my-6"><span class="text-5xl font-bold">250k</span><span class="text-gray-400">/bln</span></div>
                         <ul class="space-y-3 text-sm text-gray-300 flex-grow">
                             <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span><b>Semua fitur Max</b></span></li>
                             <li class="flex items-start gap-2"><svg class="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Dukungan khusus 24/7</span></li>
@@ -578,5 +569,6 @@
     </script>
 </body>
 </html>
+
 
 
