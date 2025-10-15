@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYCRO - AI Code Generator</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link id="favicon" rel="icon" href="">
+
+    <style>
+        /* Menggunakan font Poppins sebagai default dan Roboto Mono untuk kode */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        /* Custom scrollbar style */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* bg-gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5; /* indigo-600 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1; /* indigo-500 */
+        }
+        /* Style untuk placeholder textarea */
+        textarea::placeholder {
+            color: #6b7280; /* text-gray-500 */
+        }
+        
+        /* --- ANIMASI BARU --- */
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-slide-in-right {
+            animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+        .animate-slide-in-left {
+            animation: slideInLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+        
+        /* Animasi "Berpikir" AI (Typing Indicator) */
+        @keyframes dot-flashing {
+            0% { background-color: #facc15; } /* yellow-400 */
+            50%, 100% { background-color: rgba(250, 204, 21, 0.3); }
+        }
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 20px;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            background-color: #facc15; /* yellow-400 */
+            border-radius: 50%;
+            animation: dot-flashing 1.2s infinite linear alternate;
+        }
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#4f46e5] text-gray-100 overflow-hidden">
+
+    <div id="app" class="flex flex-col h-screen p-4 gap-4">
+        
+        <!-- Header -->
+        <header class="flex items-center justify-between bg-black bg-opacity-20 backdrop-blur-sm p-3 rounded-xl shadow-lg">
+            <div class="flex items-center gap-3">
+                <img id="logo" src="" alt="CYCRO Logo" class="h-10 w-10">
+                <h1 class="text-2xl font-bold text-white tracking-wider">CYCRO</h1>
+            </div>
+            <span class="text-sm font-light text-yellow-300">AI Powered Code Assistant</span>
+        </header>
+
+        <!-- Main Content: Chat & Editor -->
+        <!-- Layout: 1 kolom di mobile (bertumpuk), 2 kolom di layar besar (berdampingan) -->
+        <main class="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-4 h-[calc(100vh-100px)]">
+
+            <!-- Kolom Kiri: Interaksi AI -->
+            <div class="flex flex-col bg-black bg-opacity-20 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
+                <div class="p-4 border-b border-white/10">
+                    <h2 class="text-lg font-semibold text-center">Chat Assistant</h2>
+                </div>
+                <!-- Area Chat -->
+                <div id="chat-container" class="flex-grow p-4 space-y-4 overflow-y-auto">
+                    <!-- Pesan Awal -->
+                    <div class="flex items-start gap-3">
+                        <div class="h-8 w-8 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 font-bold text-sm flex-shrink-0">AI</div>
+                        <div class="bg-indigo-600 bg-opacity-50 rounded-lg p-3 max-w-lg">
+                            <p class="text-sm">Halo! Saya CYCRO, asisten AI Anda. Apa yang ingin Anda buat hari ini? Minta saya untuk membuat, memperbaiki, atau menjelaskan kode.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Input Pengguna -->
+                <div class="p-4 border-t border-white/10">
+                    <form id="chat-form" class="flex items-center gap-3">
+                        <input id="user-input" type="text" placeholder="Ketik pesan Anda di sini..." class="w-full bg-gray-800 border border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition-all duration-300">
+                        <button type="submit" class="bg-yellow-400 text-gray-900 font-bold py-2 px-5 rounded-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+                            <span>Kirim</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
+                                <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: Editor Kode -->
+            <div class="flex flex-col bg-black bg-opacity-20 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden">
+                <div class="p-4 border-b border-white/10 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold">Code Editor</h2>
+                    <button id="copy-button" class="bg-gray-700 text-white py-1 px-4 rounded-lg hover:bg-gray-600 transition-colors duration-300 text-sm flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-clipboard-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 1.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1Zm-5 0A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5v1A1.5 1.5 0 0 1 9.5 4h-3A1.5 1.5 0 0 1 5 2.5v-1Zm-2 0h1v1A2.5 2.5 0 0 0 6.5 5h3A2.5 2.5 0 0 0 12 2.5v-1h1a2 2 0 0 1 2 2V14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2Z"/>
+                        </svg>
+                        <span id="copy-text">Salin</span>
+                    </button>
+                </div>
+                <!-- Textarea untuk Kode -->
+                <div class="flex-grow p-1 relative">
+                    <textarea id="code-editor" class="w-full h-full bg-gray-900 text-green-400 font-mono p-4 rounded-b-lg border-none focus:outline-none resize-none"></textarea>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- KONFIGURASI ---
+        const API_KEY = "AIzaSyDYNA1pVYm3RQyEd8DHy1COlAR-0dCm7Qg";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${API_KEY}`;
+        
+        // --- PERATURAN UNTUK AI ---
+        const AI_RULES = `
+            Anda adalah asisten pembuat kode AI yang sangat ahli bernama CYCRO.
+            TUGAS UTAMA ANDA:
+            1.  JAWAB DALAM BAHASA INDONESIA.
+            2.  SELALU berikan penjelasan singkat dan jelas tentang kode yang Anda hasilkan SEBELUM blok kode.
+            3.  SETIAP blok kode yang Anda hasilkan HARUS menyertakan komentar watermark di baris paling atas. Format watermark: '/* Generated by CYCRO */' atau '// Generated by CYCRO' atau '# Generated by CYCRO', sesuaikan dengan bahasa pemrograman yang relevan.
+            4.  Sajikan kode dalam blok kode markdown yang jelas (contoh: \`\`\`javascript\n // kode di sini \n\`\`\`). Jangan letakkan penjelasan di dalam blok kode, kecuali sebagai komentar kode.
+            5.  Jika permintaan tidak terkait dengan coding, tanggapi dengan sopan bahwa Anda adalah asisten khusus untuk coding.
+        `;
+        
+        // --- Logo & Favicon SVG ---
+        const svgString = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1000 500C1000 598.891 970.676 695.561 915.735 777.785C860.794 860.01 782.705 924.096 691.342 961.94C599.979 999.784 499.445 1009.69 402.455 990.393C305.464 971.1 216.373 923.48 146.447 853.553C76.5204 783.627 28.9 694.536 9.60736 597.545C-9.68525 500.555 0.216418 400.021 38.0602 308.658C75.9041 217.295 139.99 139.206 222.215 84.2652C304.439 29.3245 401.109 -1.17926e-06 500 0L500 145.506C429.888 145.506 361.35 166.297 303.054 205.249C244.758 244.202 199.321 299.566 172.491 364.341C145.66 429.116 138.64 500.393 152.318 569.158C165.996 637.923 199.758 701.088 249.335 750.665C298.912 800.242 362.077 834.004 430.842 847.682C499.607 861.36 570.884 854.34 635.659 827.509C700.434 800.679 755.798 755.242 794.751 696.946C833.703 638.65 854.494 570.112 854.494 500H1000Z" fill="url(#paint0_linear_87_72)"/><path d="M774.87 85.9768C779.822 71.5837 800.178 71.5837 805.13 85.9769L838.654 183.421C840.257 188.081 843.919 191.743 848.579 193.346L946.023 226.87C960.416 231.822 960.416 252.178 946.023 257.13L848.579 290.654C843.919 292.257 840.257 295.919 838.654 300.579L805.13 398.023C800.178 412.416 779.822 412.416 774.87 398.023L741.346 300.579C739.743 295.919 736.081 292.257 731.421 290.654L633.977 257.13C619.584 252.178 619.584 231.822 633.977 226.87L731.421 193.346C736.081 191.743 739.743 188.081 741.346 183.421L774.87 85.9768Z" fill="#FFE600"/><defs><linearGradient id="paint0_linear_87_72" x1="917" y1="-12" x2="58" y2="1046.5" gradientUnits="userSpaceOnUse"><stop stop-color="#00A6FF"/><stop offset="1" stop-color="#C800FF"/></linearGradient></defs></svg>`;
+        const favicon = document.getElementById('favicon');
+        const logo = document.getElementById('logo');
+        const dataUri = `data:image/svg+xml;base64,${btoa(svgString)}`;
+        favicon.href = dataUri;
+        logo.src = dataUri;
+
+        // --- ELEMEN DOM ---
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const chatContainer = document.getElementById('chat-container');
+        const codeEditor = document.getElementById('code-editor');
+        const copyButton = document.getElementById('copy-button');
+        const copyText = document.getElementById('copy-text');
+        
+        // --- EVENT LISTENER ---
+        chatForm.addEventListener('submit', handleChatSubmit);
+        copyButton.addEventListener('click', copyCodeToClipboard);
+
+        // --- FUNGSI-FUNGSI ---
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const message = userInput.value.trim();
+            if (!message) return;
+            appendMessage(message, 'user');
+            userInput.value = '';
+            appendMessage('', 'ai', true); // Show loading indicator
+
+            try {
+                const payload = {
+                    contents: [{ parts: [{ text: message }] }],
+                    systemInstruction: { parts: [{ text: AI_RULES }] }
+                };
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+                updateLastAIMessage(aiText);
+            } catch (error) {
+                console.error("Error:", error);
+                updateLastAIMessage(`Maaf, terjadi kesalahan: ${error.message}`);
+            }
+        }
+
+        function appendMessage(text, sender, isLoading = false) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `flex items-start gap-3 ${sender === 'user' ? 'justify-end' : ''}`;
+            
+            // Terapkan animasi saat elemen ditambahkan
+            messageWrapper.classList.add(sender === 'user' ? 'animate-slide-in-right' : 'animate-slide-in-left');
+
+            let messageContent;
+            if (sender === 'ai') {
+                const bubbleContent = isLoading 
+                    ? `<div class="typing-indicator"><span></span><span></span><span></span></div>` 
+                    : `<p class="text-sm message-text">${text}</p>`;
+                
+                messageContent = `
+                    <div class="h-8 w-8 bg-yellow-400 rounded-full flex items-center justify-center text-gray-900 font-bold text-sm flex-shrink-0">AI</div>
+                    <div class="bg-indigo-600 bg-opacity-50 rounded-lg p-3 max-w-lg ${isLoading ? 'loading-bubble' : ''}">
+                        ${bubbleContent}
+                    </div>
+                `;
+            } else {
+                messageContent = `
+                    <div class="bg-gray-700 rounded-lg p-3 max-w-lg">
+                        <p class="text-sm">${text}</p>
+                    </div>
+                    <div class="h-8 w-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">U</div>
+                `;
+            }
+            
+            messageWrapper.innerHTML = messageContent;
+            chatContainer.appendChild(messageWrapper);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        function updateLastAIMessage(fullText) {
+            const loadingBubble = chatContainer.querySelector('.loading-bubble');
+            if(loadingBubble) {
+                const { explanation, code } = parseAIResponse(fullText);
+                
+                loadingBubble.innerHTML = `<p class="text-sm message-text">${explanation.replace(/\n/g, '<br>')}</p>`;
+                loadingBubble.classList.remove('loading-bubble');
+
+                if (code) {
+                    codeEditor.value = code;
+                }
+            }
+             chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function parseAIResponse(text) {
+            const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/;
+            const match = text.match(codeBlockRegex);
+
+            if (match) {
+                const explanation = text.replace(codeBlockRegex, '').trim();
+                const code = match[2].trim();
+                return { explanation, code };
+            } else {
+                return { explanation: text, code: null };
+            }
+        }
+        
+        function copyCodeToClipboard() {
+            if (codeEditor.value) {
+                codeEditor.select();
+                codeEditor.setSelectionRange(0, 99999);
+                try {
+                    document.execCommand('copy');
+                    copyText.textContent = 'Disalin!';
+                    copyButton.classList.add('bg-green-600');
+                    setTimeout(() => {
+                        copyText.textContent = 'Salin';
+                        copyButton.classList.remove('bg-green-600');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Gagal menyalin teks: ', err);
+                    copyText.textContent = 'Gagal!';
+                     setTimeout(() => {
+                        copyText.textContent = 'Salin';
+                    }, 2000);
+                }
+                window.getSelection().removeAllRanges();
+            }
+        }
+    </script>
+</body>
+</html>
+
