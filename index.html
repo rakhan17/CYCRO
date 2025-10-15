@@ -76,24 +76,28 @@
             min-height: 48px; /* Match button height */
             max-height: 200px;
             resize: none;
-            overflow-y: auto;
+            overflow-y: auto; /* Hides scrollbar until needed */
+            /* Adjust padding: more on top for label, less at bottom */
+            padding: 1.1rem 0.75rem 0.4rem 0.75rem; 
         }
         #user-input-label {
             position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
+            left: 0.85rem; /* Align with padding */
+            top: 0.9rem;  /* Vertically centered in the initial view */
             color: #9ca3af;
             transition: all 0.2s ease-in-out;
             pointer-events: none;
-            background-color: #1f2937; /* Match textarea bg */
-            padding: 0 4px;
         }
+        /* Active state for the label */
         #user-input:focus + #user-input-label,
         #user-input:not(:placeholder-shown) + #user-input-label {
             top: 0;
-            font-size: 0.75rem;
+            transform: translateY(-50%);
+            font-size: 0.75rem; /* 12px */
             color: #facc15;
+            /* Add background to "cut out" the border neatly */
+            background: #1f2937;
+            padding: 0 4px;
         }
         
         /* FIX: Typing animation caret */
@@ -204,7 +208,7 @@
                     <!-- FIX: Swapped input for textarea with floating label -->
                     <form id="chat-form" class="flex items-start gap-3">
                         <div class="relative w-full floating-label-container">
-                            <textarea id="user-input" rows="1" placeholder=" " class="w-full bg-[#1f2937] border border-gray-600 rounded-lg p-3 pt-4 focus:outline-none focus:ring-2 focus:ring-yellow-400 peer"></textarea>
+                            <textarea id="user-input" rows="1" placeholder=" " class="w-full bg-[#1f2937] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 peer"></textarea>
                             <label for="user-input" id="user-input-label">Ketik permintaan...</label>
                         </div>
                         <button type="submit" class="bg-yellow-400 text-gray-900 font-bold py-3 px-5 rounded-lg hover:bg-yellow-300 transition transform hover:scale-105 flex items-center gap-2 h-12 flex-shrink-0"><span>Kirim</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/></svg></button>
@@ -700,4 +704,5 @@
     </script>
 </body>
 </html>
+
 
